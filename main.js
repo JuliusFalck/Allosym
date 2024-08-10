@@ -33,7 +33,8 @@ const map = new google.maps.Map(document.getElementById('map'), {
     center: { lat: 20, lng: 0},
     zoom: 3,
     mapTypeId: 'satellite',
-    mapId: '4a1d5be91421f433'
+    mapId: '4a1d5be91421f433',
+    backgroundColor: "black"
   });
   
   // Initialize Deck.gl with Google Maps
@@ -54,7 +55,10 @@ async function search(){
     
 
     let search_box = document.querySelector('.search-box');
-    if (search_box.value != ""){
+    if (search_box.value == ""){
+      clear_results();
+    }
+    else{
     let response = await fetch("https://api.gbif.org/v1/species/suggest?status=ACCEPTED&nameType=SCIENTIFIC&q=" + search_box.value);
     const json = await response.json();
 
@@ -62,21 +66,38 @@ async function search(){
 
     json.forEach((res, i) =>{
 
-      let new_result_item = document.createElement('button');
+      let new_result_item = document.createElement('div');
       new_result_item.classList.add('result-item');
-      new_result_item.innerHTML = res["canonicalName"];
 
       result_list.appendChild(new_result_item);
       new_result_item.id = "result-" + i;
-      new_result_item.addEventListener('click', event => {
+
+      
+
+
+
+      let new_result_title = document.createElement('div');
+      new_result_item.appendChild(new_result_title);
+      new_result_title.classList.add('result-title');
+
+
+      new_result_title.innerHTML = res["canonicalName"];;
+
+      if (["GENUS", "SPECIES", "SUBSPECIES"].includes(res["rank"])){
+        new_result_title.style.fontStyle = "italic"
+      }
+
+
+      let new_add_button = document.createElement('img');
+      
+      new_add_button.classList.add("add-button");
+      
+      new_result_item.appendChild(new_add_button);
+
+      new_add_button.addEventListener('click', event => {
       const elements = Array.from(result_list.childNodes);
         elements.forEach(element =>{
-          element.classList.add("result-item");
-          element.classList.remove("result-item-selected");
           })
-          document.querySelector('#result-' + i).classList.remove("result-item");
-          document.querySelector('#result-' + i).classList.add("result-item-selected");
-          
           new_species(res["canonicalName"])
       })
 
@@ -92,7 +113,6 @@ function clear_results(){
 
 function new_species(name){
 
-  console.log("new")
 
   get_key(name).then(key => {
     allLayers.push(key);
@@ -108,12 +128,29 @@ function new_species(name){
   newLayer.id = "layer-" + key;
 
   // Color Hexagon
+  let colorPicker = document.createElement('input'); 
+  newLayer.appendChild(colorPicker);
+  colorPicker.classList.add('color-picker');
+  let col = layerColors[allLayers.length-1];
+  colorPicker.value = rgbToHex(col[0], col[1], col[2]);
+  colorPicker.type = "color";
+
   let hexagon = document.createElement('span'); 
   newLayer.appendChild(hexagon);
   hexagon.classList.add('hexagon');
-  let col = layerColors[allLayers.length-1];
   hexagon.style.color = 'rgb(' + col[0] +','+ col[1] +','+ col[2] + ')';
   hexagon.innerHTML = "&#x2B22;";
+
+  colorPicker.addEventListener("input",(event)=>{
+    let col = hexToRgb(colorPicker.value);
+    col.push(255/2);
+    layerColors[allLayers.indexOf(key)] = col;
+    hexagon.style.color = 'rgb(' + col[0] +','+ col[1] +','+ col[2] + ')';
+    updateLayers();
+ });
+
+
+
 
 
   // Layer Title
@@ -170,7 +207,6 @@ async function get_key(name){
 }
 
 function toggleLayer(key){
-  console.log("toggle")
   if (visibleLayers.includes(key)){
     visibleLayers.splice(visibleLayers.indexOf(key), 1); 
     document.getElementById("layer-toggle-" + key).style.backgroundColor = 'black';
@@ -191,10 +227,7 @@ function updateLayers(){
   let layers = [];
 
   allLayers.forEach((key, i) =>{
-    console.log("render: " + key)
-    console.log(visibleLayers)
     if (visibleLayers.includes(key)){
-      console.log("render: " + key)
       const newLayer = new MVTLayer({
         id: 'mvt-layer' + key,
         data: 'https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}.mvt?srs=EPSG:3857&bin=hex&taxonKey=' + key, // Replace with your MVT source URL
@@ -241,3 +274,10 @@ function changeLayerColor(index, newColor) {
 
 
 
+function rgbToHex(r, g, b) {
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function hexToRgb(hex, result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)) {
+  return result ? result.map(i => parseInt(i, 16)).slice(1) : null
+}

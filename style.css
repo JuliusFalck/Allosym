@@ -10,6 +10,7 @@
 }
 
 #middle{
+    margin: 0;
     display:flex;
     width: 100vw;
     height: 90vh;
@@ -20,72 +21,88 @@
 #bottom-bar{
     position: relative;
     left: 0;
-    width: 100vw;
+    width: 100%;
     height: 5vh;
     background-color: black;
 }
 
 #search-panel{
+    margin: 0;
     width: 15vw;
     height: 100%;
+    display:list-item;
+    
     background-color: black;
+    border: 0.1vw solid white;
+    box-sizing: border-box;
 }
 
 
 .search-box{
-    width: 95%;
-    font-size: 18px;
-    resize: none;
-    color: white;
+    width: 100%;
+    font-size: 24px;
     background-color: black;
-    border: solid;
+    border-bottom: 0.1vw solid white;
     box-sizing: border-box;
-    border: 0.1vw solid white;
+    resize: none;
+    box-shadow: none;
+    color: white;
+    outline: none;
     
 }
 
 #result-list{
     width: 100%;
-    height: 100%;
     background-color: black;
+    box-sizing: border-box;
 }
 
 .result-item{
-    font-size: 18px;
+    display: flex;
+    align-items: center;
     position: relative;
-    width: 95%;
+    width: 100%;
     height: 3vh;
     color: white;
     background-color: black;
-    margin: 0;
-    margin-top: 0.5vh;
-    padding: 0;
-    border: 0.1vw solid white;
+    border-bottom: 0.1vw solid white;
+    box-sizing: border-box;
+    padding: 0.5vw;
     box-sizing: border-box;
 }
 
-.result-item-selected{
-    font-size: 18px;
-    position: relative;
-    width: 95%;
-    height: 3vh;
-    color: white;
-    background-color: black;
-    margin: 0;
-    margin-top: 0.5vh;
-    padding: 0;
-    box-sizing: border-box;
-    border: 0.2vw solid green;
+
+
+.result-title{
+    cursor:default;
+    font-size: 24px;
+    width: 100%;
 }
 
-.result-item:hover{
-    border: 0.2vw solid rgb(20, 200, 20);
+.add-button{
+    cursor: pointer;
+    content: url("res/icon_X.svg");
+    transform: rotate(45deg);
+    height: 0.5vw;
+    width: 0.5vw;
+}
+
+.add-button:hover{
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(90deg) saturate(600%) contrast(0.8);
 }
 
 #map{
     width: 70vw;
     height: 100%;
     background-color: black;
+    border-top: 0.1vw solid white;
+    border-bottom: 0.1vw solid white;
+    box-sizing: border-box;
+}
+
+
+.color-picker{
+    width: 100%;
 }
 
 #layer-panel{
@@ -94,6 +111,8 @@
     height: 100%;
     background-color: black;
     padding: 1vw;
+    border: 0.1vw solid white;
+    box-sizing: border-box;
     
 }
 
@@ -136,13 +155,22 @@
 }
 
 
+.color-picker{
+    opacity: 0;
+    width: 2.5vw;
+}
+
 .hexagon{
+    position: absolute;
+    visibility: visible;
+    height: 3.5vh;
     cursor: pointer;
     display:block;
     opacity: 0.8;
-    font-size:60px;
+    font-size: 60px;
     margin-right: 0.5vw;
-    margin-bottom: 0.2vw;
+    margin-bottom: 1.5vw;
+    pointer-events: none;
 }
 
 
@@ -150,6 +178,7 @@
     cursor: pointer;
     font-size: 24px;
     width: 65%;
+    user-select: none;
 }
 
 
@@ -186,6 +215,7 @@
 
 
 .dark-body{
+    margin: 0;
     display: block;
     justify-content: center;
     width: 100vw;
