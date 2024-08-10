@@ -118,7 +118,6 @@
 
 
 .layer{
-    cursor: pointer;
     display: flex;
     align-items: center;
     position: relative;
@@ -134,7 +133,6 @@
 }
 
 .layer-selected{
-    cursor: pointer;
     display: flex;
     align-items: center;
     position: relative;
@@ -158,13 +156,14 @@
 .color-picker{
     opacity: 0;
     width: 2.5vw;
+    cursor: pointer;
 }
 
 .hexagon{
     position: absolute;
     visibility: visible;
     height: 3.5vh;
-    cursor: pointer;
+    
     display:block;
     opacity: 0.8;
     font-size: 60px;
@@ -175,7 +174,6 @@
 
 
 .layer-title{
-    cursor: pointer;
     font-size: 24px;
     width: 65%;
     user-select: none;
@@ -183,6 +181,7 @@
 
 
 .layer-toggle{
+    cursor: pointer;
     width: 1vw;
     height: 1vw;
     background: white;

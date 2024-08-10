@@ -252,8 +252,10 @@ function updateLayers(){
 
 
 function remove_layer(key){
+  layerColors.splice(allLayers.indexOf(key), 1);
   allLayers.splice(allLayers.indexOf(key), 1);
   visibleLayers.splice(visibleLayers.indexOf(key), 1);
+  
 
   updateLayers();
 }
