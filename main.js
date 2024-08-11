@@ -19,6 +19,9 @@ let layerColors = [[255, 0, 0, 255/2],
 
 
 let layerNum = 0;
+
+let serchData = {}
+
 document.querySelector('.search-box').addEventListener('input', event => {
   search();
 })
@@ -52,39 +55,50 @@ const map = new google.maps.Map(document.getElementById('map'), {
 
 
 async function search(){
-    
-
     let search_box = document.querySelector('.search-box');
     if (search_box.value == ""){
       clear_results();
     }
     else{
-    let response = await fetch("https://api.gbif.org/v1/species/suggest?status=ACCEPTED&nameType=SCIENTIFIC&q=" + search_box.value);
-    const json = await response.json();
 
-    clear_results()
+    // search iNat for names
+    let inat_response = await fetch("https://api.inaturalist.org/v1/taxa?q=" +
+       search_box.value +
+        "&is_active=true&order=desc&order_by=observations_count");
 
-    json.forEach((res, i) =>{
+    const inat_json = await inat_response.json();
+    let results = inat_json["results"];
 
+    clear_results();
+    
+    results.forEach((res, i) =>{
+
+      serchData[res["name"]] = {"rank": res["rank"], "commonName": res["preferred_common_name"]}
       let new_result_item = document.createElement('div');
       new_result_item.classList.add('result-item');
 
       result_list.appendChild(new_result_item);
       new_result_item.id = "result-" + i;
 
-      
-
-
+      let new_titles = document.createElement('div');
+      new_result_item.appendChild(new_titles);
+      new_titles.classList.add('result-title');
 
       let new_result_title = document.createElement('div');
-      new_result_item.appendChild(new_result_title);
+      new_titles.appendChild(new_result_title);
       new_result_title.classList.add('result-title');
 
 
-      new_result_title.innerHTML = res["canonicalName"];;
+      new_result_title.innerHTML = res["name"];
 
-      if (["GENUS", "SPECIES", "SUBSPECIES"].includes(res["rank"])){
-        new_result_title.style.fontStyle = "italic"
+      let new_result_sub_title = document.createElement('div');
+      new_titles.appendChild(new_result_sub_title);
+      new_result_sub_title.classList.add('result-sub-title');
+
+      new_result_sub_title.innerHTML = res["preferred_common_name"];
+
+      if (["genus", "species", "subspecies"].includes(res["rank"])){
+        new_result_title.style.fontStyle = "italic";
       }
 
 
@@ -98,7 +112,7 @@ async function search(){
       const elements = Array.from(result_list.childNodes);
         elements.forEach(element =>{
           })
-          new_species(res["canonicalName"])
+          new_species(res["name"]);
       })
 
     } )
@@ -157,8 +171,20 @@ function new_species(name){
   let layerTitle = document.createElement('div');
   newLayer.appendChild(layerTitle);
   layerTitle.classList.add('layer-title');
-  layerTitle.innerHTML = name;
 
+  let mainLayerTitle = document.createElement('div');
+  layerTitle.appendChild(mainLayerTitle);
+  mainLayerTitle.classList.add('layer-title-main');
+  mainLayerTitle.innerHTML = name;
+
+  if (["genus", "species", "subspecies"].includes(serchData[name]["rank"])){
+    mainLayerTitle.style.fontStyle = "italic";
+  }
+
+  let subLayerTitle = document.createElement('div');
+  layerTitle.appendChild(subLayerTitle);
+  subLayerTitle.classList.add('layer-title-sub');
+  subLayerTitle.innerHTML = serchData[name]["commonName"];
 
   // Toggle Layer
   let layerToggle = document.createElement('div');
@@ -182,17 +208,6 @@ function new_species(name){
   })
 
   
-  
-  newLayer.addEventListener('click', event => {
-  const elements = Array.from(layer_panel.childNodes);
-  elements.forEach(element =>{
-      element.classList.add("layer");
-      element.classList.remove("layer-selected");
-    })
-    newLayer.classList.remove("layer");
-    newLayer.classList.add("layer-selected");
-
-  })
 
   });
 }

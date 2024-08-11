@@ -28,18 +28,20 @@
 
 #search-panel{
     margin: 0;
+    padding: 0;
     width: 15vw;
     height: 100%;
-    display:list-item;
-    
+    display: list-item;
     background-color: black;
     border: 0.1vw solid white;
     box-sizing: border-box;
+    line-height: 0;
 }
 
 
 .search-box{
     width: 100%;
+    height: 3vh;
     font-size: 24px;
     background-color: black;
     border-bottom: 0.1vw solid white;
@@ -55,14 +57,34 @@
     width: 100%;
     background-color: black;
     box-sizing: border-box;
+    overflow-y: auto;
+    height: 86.4vh;
 }
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+    width: 0.3vw;
+    height: 0.3vw;
+    }
+    
+    ::-webkit-scrollbar-track {
+    border-left: 0.1vw solid white;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+    background: white;  
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+    background: green;
+    }
 
 .result-item{
     display: flex;
     align-items: center;
     position: relative;
     width: 100%;
-    height: 3vh;
+    height: auto;
     color: white;
     background-color: black;
     border-bottom: 0.1vw solid white;
@@ -77,14 +99,21 @@
     cursor:default;
     font-size: 24px;
     width: 100%;
+    line-height: 24px;
+}
+
+.result-sub-title{
+    cursor:default;
+    font-size: 18px;
+    width: 100%;
 }
 
 .add-button{
     cursor: pointer;
     content: url("res/icon_X.svg");
     transform: rotate(45deg);
-    height: 0.5vw;
-    width: 0.5vw;
+    height: 1vw;
+    width: 1vw;
 }
 
 .add-button:hover{
@@ -122,7 +151,7 @@
     align-items: center;
     position: relative;
     width: 100%;
-    height: 6vh;
+    height: auto;
     color: white;
     background-color: black;
     border: 0.1vw solid white;
@@ -148,9 +177,7 @@
 
 }
 
-.layer:hover{
-    border: 0.1vw solid rgb(20, 200, 20);
-}
+
 
 
 .color-picker{
@@ -177,6 +204,14 @@
     font-size: 24px;
     width: 65%;
     user-select: none;
+}
+
+.layer-title-main{
+    font-size: 24px;
+}
+
+.layer-title-sub{
+    font-size: 18px;
 }
 
 
