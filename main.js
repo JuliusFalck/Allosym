@@ -33,7 +33,7 @@ let layer_panel = document.querySelector('#layer-panel');
 
 // Initialize Google Map
 const map = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: 20, lng: 0},
+    center: { lat: 20, lng: 20},
     zoom: 3,
     mapTypeId: 'satellite',
     mapId: '4a1d5be91421f433',
@@ -224,12 +224,14 @@ async function get_key(name){
 function toggleLayer(key){
   if (visibleLayers.includes(key)){
     visibleLayers.splice(visibleLayers.indexOf(key), 1); 
-    document.getElementById("layer-toggle-" + key).style.backgroundColor = 'black';
+    document.getElementById("layer-toggle-" + key).classList.add('layer-toggle-off');
+    document.getElementById("layer-toggle-" + key).classList.remove('layer-toggle');
 
   }
   else{
     visibleLayers.push(key);
-    document.getElementById("layer-toggle-" + key).style.backgroundColor = 'white';
+    document.getElementById("layer-toggle-" + key).classList.remove('layer-toggle-off');
+    document.getElementById("layer-toggle-" + key).classList.add('layer-toggle');
   }
   
   updateLayers()

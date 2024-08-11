@@ -42,7 +42,7 @@
 .search-box{
     width: 100%;
     height: 3vh;
-    font-size: 24px;
+    font-size: 2vh;
     background-color: black;
     border-bottom: 0.1vw solid white;
     box-sizing: border-box;
@@ -97,14 +97,14 @@
 
 .result-title{
     cursor:default;
-    font-size: 24px;
+    font-size: 2vh;
     width: 100%;
-    line-height: 24px;
+    line-height: 2vh;
 }
 
 .result-sub-title{
     cursor:default;
-    font-size: 18px;
+    font-size: 1.5vh;
     width: 100%;
 }
 
@@ -190,10 +190,9 @@
     position: absolute;
     visibility: visible;
     height: 3.5vh;
-    
     display:block;
     opacity: 0.8;
-    font-size: 60px;
+    font-size: 5vh;
     margin-right: 0.5vw;
     margin-bottom: 1.5vw;
     pointer-events: none;
@@ -201,35 +200,53 @@
 
 
 .layer-title{
-    font-size: 24px;
     width: 65%;
     user-select: none;
 }
 
 .layer-title-main{
-    font-size: 24px;
+    font-size: 2vh;
 }
 
 .layer-title-sub{
-    font-size: 18px;
+    font-size: 1.5vh;
 }
 
 
 .layer-toggle{
+    background-image: url('res/eye_on.svg');
+    background-position:center;
+    background-repeat: no-repeat;
     cursor: pointer;
-    width: 1vw;
-    height: 1vw;
-    background: white;
-    border-radius: 50%;
-    border: 0.1vw solid white;
-    margin: 0.5vw;
+    width: 1.5vw;
+    height: 1.5vw;
+    margin-right: 0.5vw;
+    margin-left: 0.5vw;
+    
     
 }
 
+
+
 .layer-toggle:hover{
-    border: 0.1vw solid green;
+    background-image: url('res/eye_hover.svg');
 }
 
+.layer-toggle-off{
+    background-image: url('res/eye_off.svg');
+    background-position:center;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    width: 1.5vw;
+    height: 1.5vw;
+    margin-right: 0.5vw;
+    margin-left: 0.5vw;
+}
+
+
+.layer-toggle-off:hover{
+    background-image: url('res/eye_hover.svg');
+}
 .layer-cross{
     height: 0.5vw;
     width: 0.5vw;
