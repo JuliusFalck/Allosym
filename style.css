@@ -15,16 +15,12 @@
     width: 100vw;
     height: 90vh;
     background-color: black;
+    border: 0.1vw solid white;
+    box-sizing: border-box;
 }
 
 
-#bottom-bar{
-    position: relative;
-    left: 0;
-    width: 100%;
-    height: 5vh;
-    background-color: black;
-}
+
 
 #search-panel{
     margin: 0;
@@ -33,7 +29,7 @@
     height: 100%;
     display: list-item;
     background-color: black;
-    border: 0.1vw solid white;
+    border-right: 0.1vw solid white;
     box-sizing: border-box;
     line-height: 0;
 }
@@ -50,15 +46,18 @@
     box-shadow: none;
     color: white;
     outline: none;
+    margin: 0;
+    padding: 0;
     
 }
 
 #result-list{
     width: 100%;
     background-color: black;
-    box-sizing: border-box;
     overflow-y: auto;
-    height: 86.4vh;
+    height: 86.8vh;
+    margin: 0;
+    padding: 0;
 }
 
 /* Scrollbar styles */
@@ -124,8 +123,6 @@
     width: 70vw;
     height: 100%;
     background-color: black;
-    border-top: 0.1vw solid white;
-    border-bottom: 0.1vw solid white;
     box-sizing: border-box;
 }
 
@@ -139,10 +136,37 @@
     width: 15vw;
     height: 100%;
     background-color: black;
-    padding: 1vw;
-    border: 0.1vw solid white;
+    padding: 0.5vw;
+    border-left: 0.1vw solid white;
+
     box-sizing: border-box;
+
+    overflow: auto;
     
+}
+
+
+.layer-container{
+    box-sizing: content-box;
+    display: list-item;
+    list-style: none;
+    margin-left: 0.5vw;
+    padding: 0;
+    border-left: 0.1vw solid white;
+    
+}
+.layer-container:hover{
+    border-left: 0.1vw solid green;
+}
+
+
+.layer-container-selected{
+    box-sizing: content-box;
+    display: list-item;
+    list-style: none;
+    margin-left: 0.5vw;
+    padding: 0;
+    border-left: 0.1vw solid green;
 }
 
 
@@ -154,11 +178,12 @@
     height: auto;
     color: white;
     background-color: black;
-    border: 0.1vw solid white;
     box-sizing: border-box;
     padding: 0.5vw;
     margin-bottom: 1vw;
-    box-sizing: border-box;
+    
+    border: 0.1vw solid white;
+    border-left: 0vw solid white;
 }
 
 .layer-selected{
@@ -166,15 +191,22 @@
     align-items: center;
     position: relative;
     width: 100%;
-    height: 6vh;
+    height: auto;
     color: white;
     background-color: black;
-    border: 0.1vw solid green;
     box-sizing: border-box;
     padding: 0.5vw;
     margin-bottom: 1vw;
-    box-sizing: border-box;
 
+    border: 0.1vw solid green;
+    border-left: 0vw solid white;
+    
+
+}
+
+.layer:hover{
+    border: 0.1vw solid green;
+    border-left: 0vw solid white;
 }
 
 
@@ -229,8 +261,9 @@
 
 
 .layer-toggle:hover{
-    background-image: url('res/eye_hover.svg');
+    background-image: url('res/eye_on_hover.svg');
 }
+
 
 .layer-toggle-off{
     background-image: url('res/eye_off.svg');
@@ -245,24 +278,66 @@
 
 
 .layer-toggle-off:hover{
-    background-image: url('res/eye_hover.svg');
+    background-image: url('res/eye_off_hover.svg');
 }
+
+
+
+
 .layer-cross{
-    height: 0.5vw;
-    width: 0.5vw;
+    height: 1vw;
+    width: 1vw;
     cursor: pointer;
     color: white;
     user-select: none;
     padding-bottom: 3vh;
-    
-    
-    
 
 }
+
 .layer-cross:hover{
-    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8);
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(90deg) saturate(600%) contrast(0.8);
 }
 
+#bottom-bar{
+    display: flex;
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: 5vh;
+    background-color: black;
+    border-bottom: 0.1vw solid white;
+    border-left: 0.1vw solid white;
+    border-right: 0.1vw solid white;
+    box-sizing: border-box;
+    
+}
+
+#bottom-fill{
+    width: 85%;
+}
+
+#layer-tool-bar{
+    display: none;
+    width: 15vw;
+    position: relative;
+    border-left: 0.1vw solid white;
+    box-sizing: border-box;
+
+}
+
+.explode-button{
+    content: url('res/explosion.svg');
+    cursor: pointer;
+    width: 3vh;
+    height: 3vh;
+    margin: 0.5vw;
+
+}
+
+
+.explode-button:hover{
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(90deg) saturate(600%) contrast(0.8);
+}
 
 
 .dark-body{
