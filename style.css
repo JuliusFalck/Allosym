@@ -2,11 +2,22 @@
 
 
 #top-bar{
+    display: flex;
     position: relative;
+    align-items: center;
     left: 0;
     width: 100vw;
     height: 5vh;
     background-color: black;
+    justify-content: center;
+}
+
+
+.title{
+    height: 3vh;
+    width: 8vw;
+    color: white;
+    user-select: none;
 }
 
 #middle{
