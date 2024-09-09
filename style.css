@@ -1,6 +1,9 @@
 
 
 
+
+
+
 #top-bar{
     display: flex;
     position: relative;
@@ -14,8 +17,9 @@
 
 
 .title{
+    margin-top: 0.8vh;
     height: 3vh;
-    width: 8vw;
+    width: 12vh;
     color: white;
     user-select: none;
 }
@@ -122,8 +126,9 @@
     cursor: pointer;
     content: url("res/icon_X.svg");
     transform: rotate(45deg);
-    height: 1vw;
-    width: 1vw;
+    height: 2vh;
+    width: 2vh;
+    margin: 0.5vh;
 }
 
 .add-button:hover{
@@ -147,7 +152,7 @@
     width: 15vw;
     height: 100%;
     background-color: black;
-    padding: 0.5vw;
+    padding: 1vh;
     border-left: 0.1vw solid white;
 
     box-sizing: border-box;
@@ -190,7 +195,7 @@
     color: white;
     background-color: black;
     box-sizing: border-box;
-    padding: 0.5vw;
+    padding: 1vh;
     margin-bottom: 1vw;
     
     border: 0.1vw solid white;
@@ -206,7 +211,7 @@
     color: white;
     background-color: black;
     box-sizing: border-box;
-    padding: 0.5vw;
+    padding: 1vh;
     margin-bottom: 1vw;
 
     border: 0.1vw solid green;
@@ -225,7 +230,7 @@
 
 .color-picker{
     opacity: 0;
-    width: 2.5vw;
+    width: 5vh;
     cursor: pointer;
 }
 
@@ -236,14 +241,14 @@
     display:block;
     opacity: 0.8;
     font-size: 5vh;
-    margin-right: 0.5vw;
-    margin-bottom: 1.5vw;
+    margin-right: 1vh;
+    margin-bottom: 4vh;
     pointer-events: none;
 }
 
 
 .layer-title{
-    width: 65%;
+    width: 75%;
     user-select: none;
 }
 
@@ -261,10 +266,10 @@
     background-position:center;
     background-repeat: no-repeat;
     cursor: pointer;
-    width: 1.5vw;
-    height: 1.5vw;
-    margin-right: 0.5vw;
-    margin-left: 0.5vw;
+    width: 3vh;
+    height: 3vh;
+    margin-right: 1vh;
+    margin-left: 1vh;
     
     
 }
@@ -281,10 +286,10 @@
     background-position:center;
     background-repeat: no-repeat;
     cursor: pointer;
-    width: 1.5vw;
-    height: 1.5vw;
-    margin-right: 0.5vw;
-    margin-left: 0.5vw;
+    width: 3vh;
+    height: 3vh;
+    margin-right: 1vh;
+    margin-left: 1vh;
 }
 
 
@@ -296,8 +301,8 @@
 
 
 .layer-cross{
-    height: 1vw;
-    width: 1vw;
+    height: 1.5vh;
+    width: 1.5vh;
     cursor: pointer;
     color: white;
     user-select: none;
@@ -306,7 +311,7 @@
 }
 
 .layer-cross:hover{
-    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(90deg) saturate(600%) contrast(0.8);
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(330deg) saturate(600%) contrast(0.8);
 }
 
 #bottom-bar{
@@ -360,3 +365,55 @@
     overflow-y: hidden;
     overflow-x: hidden;
 }   
+
+
+
+
+
+.vertical-menu{
+    display: flex;
+    visibility: hidden;
+    position: absolute;
+    align-items: center;
+    justify-content:space-around;
+    bottom: 0vh;
+    width: 100vw;
+    height: 5vh;
+    background-color: black;
+    border-top: 0.1vw solid white;
+    z-index: 1;
+}
+
+
+
+.v-menu-button{
+    width: 4vh;
+    height: 4vh;
+    border-bottom: 0.2vh solid black;
+}
+
+.v-menu-button-active{
+    width: 4vh;
+    height: 4vh;
+    border-bottom: 0.2vh solid white;
+}
+
+
+@media (max-aspect-ratio: 1/1) {
+    .vertical-menu{
+        visibility: visible;
+    }
+    #search-panel{
+        width: 100vw;
+        display: none;
+    }
+
+    #map{
+        width: 100vw;
+    }
+
+    #layer-panel{
+        width: 100vw;
+        display: none;
+    }
+  }

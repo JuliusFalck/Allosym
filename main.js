@@ -30,8 +30,38 @@ let layerPanel = document.querySelector('#layer-panel');
 
 let explodeButton = document.querySelector('.explode-button')
 
+let searchButton = document.querySelector('#search-button')
+
+let mapButton = document.querySelector('#map-button')
+
+let layerButton = document.querySelector('#layer-button')
+
+
 explodeButton.addEventListener('click', event => {
   explode();
+})
+
+searchButton.addEventListener('click', event => {
+  switchView("search");
+  searchButton.style.borderBottom = "0.2vh solid white"; 
+  mapButton.style.borderBottom = "0.2vh solid black";
+  layerButton.style.borderBottom = "0.2vh solid black";
+})
+
+mapButton.addEventListener('click', event => {
+  switchView("map");
+  searchButton.style.borderBottom = "0.2vh solid black"; 
+  mapButton.style.borderBottom = "0.2vh solid white";
+  layerButton.style.borderBottom = "0.2vh solid black";
+
+})
+
+layerButton.addEventListener('click', event => {
+  switchView("layer");
+  searchButton.style.borderBottom = "0.2vh solid black"; 
+  mapButton.style.borderBottom = "0.2vh solid black";
+  layerButton.style.borderBottom = "0.2vh solid white";
+  
 })
 
 // Initialize Google Map
@@ -466,6 +496,24 @@ async function iNatSearch(name) {
 
   })
   return result;
+}
+
+
+
+// mobile
+
+function switchView(view){
+  document.querySelector('#search-panel').style.display = "none";
+  document.querySelector('#map').style.display = "none";
+  document.querySelector('#layer-panel').style.display = "none";
+
+
+  if (view != "map"){
+    view += "-panel";
+  }
+  console.log("switch")
+  document.querySelector('#' + view).style.display = "block";
+
 }
 
 // color algorithems
