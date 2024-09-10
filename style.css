@@ -30,7 +30,6 @@
     width: 100vw;
     height: 90vh;
     background-color: black;
-    border: 0.1vw solid white;
     box-sizing: border-box;
 }
 
@@ -43,19 +42,18 @@
     width: 15vw;
     height: 100%;
     display: list-item;
-    background-color: black;
-    border-right: 0.1vw solid white;
+    border: 0.2vh solid white;
     box-sizing: border-box;
     line-height: 0;
 }
 
-
-.search-box{
+.search-box-container{
+    display: flex;
     width: 100%;
     height: 3vh;
     font-size: 2vh;
     background-color: black;
-    border-bottom: 0.1vw solid white;
+    border-bottom: 0.2vh solid white;
     box-sizing: border-box;
     resize: none;
     box-shadow: none;
@@ -63,12 +61,39 @@
     outline: none;
     margin: 0;
     padding: 0;
+    align-items: center;
+    
+}
+.search-box{
+    height: 2.8vh;
+    width: 100%;
+    font-size: 2vh;
+    background-color: black;
+    box-sizing: border-box;
+    resize: none;
+    box-shadow: none;
+    color: white;
+    outline: none;
+    margin: 1vh;
+    padding: 0;
+    border: none;
     
 }
 
+.clear-search-button{
+    cursor: pointer;
+    width: 1.5vh;
+    height: 1.5vh;
+    margin: 1vh;
+}
+
+.clear-search-button:hover{
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(330deg) saturate(600%) contrast(0.8);
+}
+
+
 #result-list{
     width: 100%;
-    background-color: black;
     overflow-y: auto;
     height: 86.8vh;
     margin: 0;
@@ -82,7 +107,7 @@
     }
     
     ::-webkit-scrollbar-track {
-    border-left: 0.1vw solid white;
+    border-left: 0.2vh solid white;
     }
     
     ::-webkit-scrollbar-thumb {
@@ -101,7 +126,7 @@
     height: auto;
     color: white;
     background-color: black;
-    border-bottom: 0.1vw solid white;
+    border-bottom: 0.2vh solid white;
     box-sizing: border-box;
     padding: 0.5vw;
     box-sizing: border-box;
@@ -140,6 +165,9 @@
     height: 100%;
     background-color: black;
     box-sizing: border-box;
+    border-top: 0.2vh solid white;
+    border-bottom: 0.2vh solid white;
+
 }
 
 
@@ -153,7 +181,7 @@
     height: 100%;
     background-color: black;
     padding: 1vh;
-    border-left: 0.1vw solid white;
+    border: 0.2vh solid white;
 
     box-sizing: border-box;
 
@@ -166,13 +194,14 @@
     box-sizing: content-box;
     display: list-item;
     list-style: none;
-    margin-left: 0.5vw;
-    padding: 0;
-    border-left: 0.1vw solid white;
+    margin-left: 1vh;
+    margin-top: 1vh;
+    padding-top: 0;
+    border-left: 0.2vh solid white;
     
 }
 .layer-container:hover{
-    border-left: 0.1vw solid green;
+    border-left: 0.2vh solid green;
 }
 
 
@@ -180,9 +209,10 @@
     box-sizing: content-box;
     display: list-item;
     list-style: none;
-    margin-left: 0.5vw;
+    margin-left: 1vh;
+    margin-top: 1vh;
     padding: 0;
-    border-left: 0.1vw solid green;
+    border-left: 0.2vh solid green;
 }
 
 
@@ -196,9 +226,9 @@
     background-color: black;
     box-sizing: border-box;
     padding: 1vh;
-    margin-bottom: 1vw;
+    margin-bottom: 1vh;
     
-    border: 0.1vw solid white;
+    border: 0.2vh solid white;
     border-left: 0vw solid white;
 }
 
@@ -212,16 +242,16 @@
     background-color: black;
     box-sizing: border-box;
     padding: 1vh;
-    margin-bottom: 1vw;
+    margin-bottom: 1vh;
 
-    border: 0.1vw solid green;
+    border: 0.2vh solid green;
     border-left: 0vw solid white;
     
 
 }
 
 .layer:hover{
-    border: 0.1vw solid green;
+    border: 0.2vh solid green;
     border-left: 0vw solid white;
 }
 
@@ -314,6 +344,15 @@
     filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(330deg) saturate(600%) contrast(0.8);
 }
 
+
+.child-count{
+    position: fixed;
+    font-size: 2vh;
+    pointer-events: none;
+    margin-top: 4.5vh;
+    margin-left: 0.2vh;
+}
+
 #bottom-bar{
     display: flex;
     position: relative;
@@ -321,9 +360,6 @@
     width: 100%;
     height: 5vh;
     background-color: black;
-    border-bottom: 0.1vw solid white;
-    border-left: 0.1vw solid white;
-    border-right: 0.1vw solid white;
     box-sizing: border-box;
     
 }
@@ -336,7 +372,6 @@
     display: none;
     width: 15vw;
     position: relative;
-    border-left: 0.1vw solid white;
     box-sizing: border-box;
 
 }
@@ -346,7 +381,7 @@
     cursor: pointer;
     width: 3vh;
     height: 3vh;
-    margin: 0.5vw;
+    margin: 1vh;
 
 }
 
@@ -380,7 +415,7 @@
     width: 100vw;
     height: 5vh;
     background-color: black;
-    border-top: 0.1vw solid white;
+    border-top: 0.2vh solid white;
     z-index: 1;
 }
 
@@ -410,10 +445,22 @@
 
     #map{
         width: 100vw;
+        border: 0.2vh solid white;
+        
     }
 
     #layer-panel{
         width: 100vw;
         display: none;
+    }
+
+
+
+    #bottom-fill{
+        width: 0;
+    }
+
+    #bottom-bar{
+        height: 10vh;
     }
   }

@@ -20,22 +20,29 @@ let serchData = {};
 
 const acceptedRanks = ["kingdom", "phylum", "class", "order", "family", "genus", "species", "subspecies"]
 
-document.querySelector('.search-box').addEventListener('input', event => {
-  search();
-})
+// Elements
+
+let searchBox = document.querySelector('.search-box');
 
 let resultList = document.querySelector('#result-list');
 
 let layerPanel = document.querySelector('#layer-panel');
 
-let explodeButton = document.querySelector('.explode-button')
+let explodeButton = document.querySelector('.explode-button');
 
-let searchButton = document.querySelector('#search-button')
+let searchButton = document.querySelector('#search-button');
 
-let mapButton = document.querySelector('#map-button')
+let mapButton = document.querySelector('#map-button');
 
-let layerButton = document.querySelector('#layer-button')
+let layerButton = document.querySelector('#layer-button');
 
+let clearSearchButton = document.querySelector(".clear-search-button");
+
+// Events
+
+searchBox.addEventListener('input', event => {
+  search();
+})
 
 explodeButton.addEventListener('click', event => {
   explode();
@@ -64,13 +71,21 @@ layerButton.addEventListener('click', event => {
   
 })
 
+
+clearSearchButton.addEventListener('click', event => {
+  searchBox.value = "";
+  searchBox.focus();
+  search();
+} )
+
 // Initialize Google Map
 const map = new google.maps.Map(document.getElementById('map'), {
   center: { lat: 20, lng: 20 },
   zoom: 3,
   mapTypeId: 'satellite',
   mapId: '4a1d5be91421f433',
-  backgroundColor: "black"
+  backgroundColor: "black",
+  gestureHandling: "greedy"
 });
 
 // Initialize Deck.gl with Google Maps
@@ -88,15 +103,15 @@ const MVTLayer = deck.MVTLayer;
 
 
 async function search() {
-  let search_box = document.querySelector('.search-box');
-  if (search_box.value == "") {
+
+  if (searchBox.value == "") {
     clear_results();
   }
   else {
 
     // search iNat for names
     let inat_response = await fetch("https://api.inaturalist.org/v1/taxa?q=" +
-      search_box.value +
+      searchBox.value +
       "&is_active=true&order=desc&order_by=observations_count");
 
     const inat_json = await inat_response.json();
@@ -267,6 +282,11 @@ function addLayer(key, name, parent) {
       updateLayers();
     })
 
+    // child-count
+    let childCount = document.createElement('div');
+    newLayer.appendChild(childCount);
+    childCount.classList.add('child-count');
+    childCount.id = "child-count-" + key;
 
   }
 
@@ -346,6 +366,12 @@ function updateLayers() {
   deckOverlay.setProps({
     layers: layers
   });
+
+  // update child count
+  for (const parent in Object.keys(childrenDict)){
+    document.getElementById("child-count-" + Object.keys(childrenDict)[parent]).innerHTML = childrenDict[Object.keys(childrenDict)[parent]].length;
+  }
+
 }
 
 
@@ -388,8 +414,17 @@ function removeLayer(key) {
   if (Object.keys(childrenDict).includes(key.toString())) {
     for (const childKey of childrenDict[key]) {
       removeLayer(childKey);
+
     }
   }
+
+  // update children dict
+  for (const parent in Object.keys(childrenDict)){
+    if (childrenDict[Object.keys(childrenDict)[parent]].includes(key)){
+      childrenDict[Object.keys(childrenDict)[parent]].splice(childrenDict[Object.keys(childrenDict)[parent]].indexOf(key), 1);
+    }
+  }
+
   myColors.splice(allLayers.indexOf(key), 1);
   allLayers.splice(allLayers.indexOf(key), 1);
   visibleLayers.splice(visibleLayers.indexOf(key), 1);
@@ -511,8 +546,14 @@ function switchView(view){
   if (view != "map"){
     view += "-panel";
   }
-  console.log("switch")
   document.querySelector('#' + view).style.display = "block";
+
+  if (view == "layer-panel"){
+    document.querySelector("#middle").style.height = "85vh";
+  }
+  else{
+    document.querySelector("#middle").style.height = "90vh";
+  }
 
 }
 
