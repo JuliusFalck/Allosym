@@ -2,6 +2,7 @@
 
 
 
+
 let allLayers = [];
 
 let visibleLayers = [];
@@ -10,13 +11,14 @@ let selectedLayers = [];
 
 let childrenDict = {};
 
-let myColors = [];
+let myColors = {};
 
 let layerNum = 0;
 
 let nameDict = {};
 
 let serchData = {};
+
 
 const acceptedRanks = ["kingdom", "phylum", "class", "order", "family", "genus", "species", "subspecies"]
 
@@ -38,6 +40,15 @@ let layerButton = document.querySelector('#layer-button');
 
 let clearSearchButton = document.querySelector(".clear-search-button");
 
+let mapName = document.querySelector(".map-name");
+
+let mapNameInput = document.querySelector(".map-name-input");
+
+let saveButton = document.querySelector(".save-button");
+
+let loadButton = document.querySelector(".load-button");
+
+
 // Events
 
 searchBox.addEventListener('input', event => {
@@ -50,14 +61,14 @@ explodeButton.addEventListener('click', event => {
 
 searchButton.addEventListener('click', event => {
   switchView("search");
-  searchButton.style.borderBottom = "0.2vh solid white"; 
+  searchButton.style.borderBottom = "0.2vh solid white";
   mapButton.style.borderBottom = "0.2vh solid black";
   layerButton.style.borderBottom = "0.2vh solid black";
 })
 
 mapButton.addEventListener('click', event => {
   switchView("map");
-  searchButton.style.borderBottom = "0.2vh solid black"; 
+  searchButton.style.borderBottom = "0.2vh solid black";
   mapButton.style.borderBottom = "0.2vh solid white";
   layerButton.style.borderBottom = "0.2vh solid black";
 
@@ -65,10 +76,10 @@ mapButton.addEventListener('click', event => {
 
 layerButton.addEventListener('click', event => {
   switchView("layer");
-  searchButton.style.borderBottom = "0.2vh solid black"; 
+  searchButton.style.borderBottom = "0.2vh solid black";
   mapButton.style.borderBottom = "0.2vh solid black";
   layerButton.style.borderBottom = "0.2vh solid white";
-  
+
 })
 
 
@@ -76,7 +87,35 @@ clearSearchButton.addEventListener('click', event => {
   searchBox.value = "";
   searchBox.focus();
   search();
-} )
+})
+
+mapName.addEventListener('click', event => {
+  setName();
+})
+
+mapNameInput.addEventListener('input', event => {
+  mapName.innerHTML = mapNameInput.value;
+})
+
+mapNameInput.addEventListener("keypress", (event)=> {
+  console.log(event.keyCode)
+  if (event.keyCode === 13) { // key code of the keybord key
+    setName();
+    console.log("Zzzzzzzzzzzzz")
+    mapName.style.display = "block";
+    mapNameInput.style.display = "none";
+  }
+});
+
+saveButton.addEventListener('click', event => {
+  saveMap();
+})
+
+loadButton.addEventListener('click', event => {
+  loadMap();
+})
+
+
 
 // Initialize Google Map
 const map = new google.maps.Map(document.getElementById('map'), {
@@ -96,10 +135,9 @@ let deckOverlay = new deck.GoogleMapsOverlay({
 deckOverlay.setMap(map);
 
 
+
+
 const MVTLayer = deck.MVTLayer;
-
-
-
 
 
 async function search() {
@@ -167,10 +205,8 @@ async function search() {
 
         new_add_button.addEventListener('click', event => {
           const elements = Array.from(resultList.childNodes);
-          elements.forEach(element => {
-          })
           getKey(res["name"]).then(key => {
-            addLayer(key, res["name"], layerPanel);
+            newLayer(key, res["name"], layerPanel);
           }
           )
 
@@ -185,114 +221,152 @@ function clear_results() {
   resultList.innerHTML = "";
 }
 
-
-function addLayer(key, name, parent) {
-
+function newLayer(key, name, parent) {
   if (!allLayers.includes(key)) {
-    nameDict[key] = [name];
-
     allLayers.push(key);
     visibleLayers.push(key);
-
-    let col = newColor(allLayers.length);
-    myColors.push(col);
-    updateLayers();
-
-    // add layer in list
-    let newLayerContainer = document.createElement('div');
-    parent.appendChild(newLayerContainer);
-    newLayerContainer.classList.add('layer-container');
-    if (parent == layerPanel) {
-      newLayerContainer.style.marginLeft = "0";
-    }
-
-    let newLayer = document.createElement('div');
-    newLayerContainer.appendChild(newLayer);
-    newLayer.classList.add('layer');
-
-    newLayer.id = "layer-" + key;
-
-    newLayer.addEventListener("click", (event) => {
-      selectLayer(key);
-    });
-
-
-    // Color Hexagon
-    let colorPicker = document.createElement('input');
-    newLayer.appendChild(colorPicker);
-    colorPicker.classList.add('color-picker');
-
-    colorPicker.value = rgbToHex(col[0], col[1], col[2]);
-    colorPicker.type = "color";
-
-    let hexagon = document.createElement('span');
-    newLayer.appendChild(hexagon);
-    hexagon.classList.add('hexagon');
-    hexagon.style.color = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
-    hexagon.innerHTML = "&#x2B22;";
-
-    colorPicker.addEventListener("input", (event) => {
-      let col = hexToRgb(colorPicker.value);
-      col.push(255 / 2);
-      myColors[allLayers.indexOf(key)] = col;
-      hexagon.style.color = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
-      updateLayers();
-      event.stopPropagation();
-    });
-
-    // Layer Title
-    let layerTitle = document.createElement('div');
-    newLayer.appendChild(layerTitle);
-    layerTitle.classList.add('layer-title');
-
-    let mainLayerTitle = document.createElement('div');
-    layerTitle.appendChild(mainLayerTitle);
-    mainLayerTitle.classList.add('layer-title-main');
-    mainLayerTitle.innerHTML = name;
-
-    if (["genus", "species", "subspecies"].includes(serchData[name]["rank"])) {
-      mainLayerTitle.style.fontStyle = "italic";
-    }
-
-    let subLayerTitle = document.createElement('div');
-    layerTitle.appendChild(subLayerTitle);
-    subLayerTitle.classList.add('layer-title-sub');
-    subLayerTitle.innerHTML = serchData[name]["commonName"];
-
-    // Toggle Layer
-    let layerToggle = document.createElement('div');
-    newLayer.appendChild(layerToggle);
-    layerToggle.classList.add('layer-toggle');
-    layerToggle.id = "layer-toggle-" + key;
-
-    layerToggle.addEventListener('click', event => {
-      toggleLayer(key);
-      event.stopPropagation();
-    })
-
-    // Cross Mark
-    let layerCross = document.createElement('img');
-    newLayer.appendChild(layerCross);
-    layerCross.classList.add('layer-cross');
-    layerCross.src = "res/icon_X.svg";
-
-    layerCross.addEventListener('click', event => {
-      removeLayer(key);
-      newLayer.parentElement.remove();
-      updateLayers();
-    })
-
-    // child-count
-    let childCount = document.createElement('div');
-    newLayer.appendChild(childCount);
-    childCount.classList.add('child-count');
-    childCount.id = "child-count-" + key;
-
+    addLayer(key, name, parent, true);
   }
-
   else {
     nameDict[key].push(name)
   }
+}
+
+function addLayer(key, name, parent, visible) {
+
+  nameDict[key] = [name];
+
+  let col = newColor(allLayers.length);
+  if (Object.keys(myColors).includes(key.toString())) {
+    col = myColors[key];
+  }
+  else {
+    myColors[key] = col;
+  }
+
+  updateLayers();
+
+  // add layer in list
+  let newLayerContainer = document.createElement('div');
+  parent.appendChild(newLayerContainer);
+  newLayerContainer.classList.add('layer-container');
+  if (parent == layerPanel) {
+    newLayerContainer.style.marginLeft = "0";
+  }
+
+  let newLayer = document.createElement('div');
+  newLayerContainer.appendChild(newLayer);
+  newLayer.classList.add('layer');
+
+  newLayer.id = "layer-" + key;
+
+  newLayer.addEventListener("click", (event) => {
+    selectLayer(key);
+  });
+
+
+  // Color Hexagon
+
+  let alphaPicker = document.createElement('input');
+  newLayer.appendChild(alphaPicker);
+  alphaPicker.classList.add('alpha-picker');
+  alphaPicker.type = "range";
+
+
+  let hexagon = document.createElement('span');
+  newLayer.appendChild(hexagon);
+  hexagon.classList.add('hexagon');
+  hexagon.style.color = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
+  hexagon.innerHTML = "&#x2B22;";
+
+  let colorPicker = document.createElement('input');
+  hexagon.appendChild(colorPicker);
+  colorPicker.classList.add('color-picker');
+
+  colorPicker.value = rgbToHex(col[0], col[1], col[2]);
+  colorPicker.type = "color";
+
+
+
+
+
+  hexagon.addEventListener("click", (event) => {
+    colorPicker.click();
+
+  });
+
+
+  colorPicker.addEventListener("input", (event) => {
+    let col = hexToRgb(colorPicker.value);
+    col.push(alphaPicker.value * 255);
+    myColors[key] = col;
+    hexagon.style.color = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
+    updateLayers();
+    event.stopPropagation();
+  });
+
+
+  alphaPicker.addEventListener("input", (event) => {
+    let col = hexToRgb(colorPicker.value);
+    col.push(alphaPicker.value / 100 * 255);
+    myColors[key] = col;
+    hexagon.style.color = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
+    updateLayers();
+    event.stopPropagation();
+  });
+
+  // Layer Title
+  let layerTitle = document.createElement('div');
+  newLayer.appendChild(layerTitle);
+  layerTitle.classList.add('layer-title');
+
+  let mainLayerTitle = document.createElement('div');
+  layerTitle.appendChild(mainLayerTitle);
+  mainLayerTitle.classList.add('layer-title-main');
+  mainLayerTitle.innerHTML = name;
+
+  if (["genus", "species", "subspecies"].includes(serchData[name]["rank"])) {
+    mainLayerTitle.style.fontStyle = "italic";
+  }
+
+  let subLayerTitle = document.createElement('div');
+  layerTitle.appendChild(subLayerTitle);
+  subLayerTitle.classList.add('layer-title-sub');
+  subLayerTitle.innerHTML = serchData[name]["commonName"];
+
+  // Toggle Layer
+  let layerToggle = document.createElement('div');
+  newLayer.appendChild(layerToggle);
+  layerToggle.classList.add('layer-toggle');
+  layerToggle.id = "layer-toggle-" + key;
+
+  layerToggle.addEventListener('click', event => {
+    toggleLayer(key);
+    event.stopPropagation();
+  })
+
+
+  // Cross Mark
+  let layerCross = document.createElement('img');
+  newLayer.appendChild(layerCross);
+  layerCross.classList.add('layer-cross');
+  layerCross.src = "res/icon_X.svg";
+
+  layerCross.addEventListener('click', event => {
+    removeLayer(key);
+    newLayer.parentElement.remove();
+    updateLayers();
+  })
+
+  // child-count
+  let childCount = document.createElement('div');
+  newLayer.appendChild(childCount);
+  childCount.classList.add('child-count');
+  childCount.id = "child-count-" + key;
+
+
+
+
 }
 
 
@@ -353,7 +427,7 @@ function updateLayers() {
         data: 'https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}.mvt?srs=EPSG:3857&bin=hex&taxonKey=' + key, // Replace with your MVT source URL
         minZoom: 0,
         maxZoom: 23,
-        getFillColor: myColors[i],
+        getFillColor: myColors[key],
         getLineColor: [0, 0, 0, 0],
         lineWidthMinPixels: 1,
         pickable: true
@@ -362,13 +436,12 @@ function updateLayers() {
     }
 
   })
-
   deckOverlay.setProps({
     layers: layers
   });
 
   // update child count
-  for (const parent in Object.keys(childrenDict)){
+  for (const parent in Object.keys(childrenDict)) {
     document.getElementById("child-count-" + Object.keys(childrenDict)[parent]).innerHTML = childrenDict[Object.keys(childrenDict)[parent]].length;
   }
 
@@ -386,6 +459,25 @@ function updateUI() {
     layerTools.style.display = "none";
   }
 
+}
+
+
+function updateLayerPanel() {
+  allLayers.forEach((key, i) => {
+    let parent = layerPanel;
+    Object.keys(childrenDict).forEach(parent_key => {
+      if (childrenDict[parent_key].includes(key)) {
+        parent = parent_key
+      }
+    })
+    let visible = false;
+    if (visibleLayers.includes(key)) {
+      visible = true;
+    }
+    addLayer(key, nameDict[key], parent);
+    toggleLayer(key);
+    toggleLayer(key);
+  })
 }
 
 function selectLayer(key) {
@@ -419,13 +511,12 @@ function removeLayer(key) {
   }
 
   // update children dict
-  for (const parent in Object.keys(childrenDict)){
-    if (childrenDict[Object.keys(childrenDict)[parent]].includes(key)){
+  for (const parent in Object.keys(childrenDict)) {
+    if (childrenDict[Object.keys(childrenDict)[parent]].includes(key)) {
       childrenDict[Object.keys(childrenDict)[parent]].splice(childrenDict[Object.keys(childrenDict)[parent]].indexOf(key), 1);
     }
   }
-
-  myColors.splice(allLayers.indexOf(key), 1);
+  delete myColors[key]
   allLayers.splice(allLayers.indexOf(key), 1);
   visibleLayers.splice(visibleLayers.indexOf(key), 1);
   selectedLayers.splice(selectedLayers.indexOf(key), 1);
@@ -449,7 +540,7 @@ async function explode() {
       let sortedLayers = Object.keys(layersToAdd);
       sortedLayers.sort();
       sortedLayers.forEach(name => {
-        addLayer(layersToAdd[name][0], name, layersToAdd[name][1]);
+        newLayer(layersToAdd[name][0], name, layersToAdd[name][1]);
       })
     }
   })
@@ -533,25 +624,113 @@ async function iNatSearch(name) {
   return result;
 }
 
+function setName() {
+    mapName.style.display = "none";
+    mapNameInput.style.display = "block";
+    mapNameInput.value = mapName.innerHTML;
+    mapNameInput.focus();
 
+}
+
+function saveMap() {
+  // Create the object (similar to a dict in Python)
+  const myMap = {
+    "allLayers": allLayers,
+    "visibleLayers": visibleLayers,
+    "childrenDict": childrenDict,
+    "myColors": myColors,
+    "layerNum": layerNum,
+    "nameDict": nameDict,
+    "serchData": serchData
+  };
+
+  // Convert the object to a JSON string
+  const jsonString = JSON.stringify(myMap, null, 2); // null and 2 are for pretty-printing
+
+  // Create a Blob object representing the JSON data as a file
+  const blob = new Blob([jsonString], { type: 'application/json' });
+
+  // Create a URL for the Blob
+  const url = URL.createObjectURL(blob);
+
+  // Create an anchor element to download the file
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = mapName.innerHTML + '.json';  // Set the desired file name
+
+  // Programmatically click the anchor element to trigger the download
+  a.click();
+
+  // Revoke the URL after the download
+  URL.revokeObjectURL(url);
+}
+
+function loadMap() {
+
+  const input = document.createElement('input');
+  input.type = "file";
+  input.accept = ".json"
+  input.addEventListener('change', (event) => {
+    // Get the selected file
+    const file = event.target.files[0];
+    mapName.innerHTML = file.name.split(".")[0];
+
+    if (file.type === "application/json") {
+      // Create a new FileReader to read the file
+      const reader = new FileReader();
+      // Define what happens when the file is read
+      reader.onload = function (e) {
+        try {
+          // Parse the JSON content
+          const jsonData = JSON.parse(e.target.result);
+
+          allLayers = jsonData["allLayers"];
+          visibleLayers = jsonData["visibleLayers"];
+          childrenDict = jsonData["childrenDict"];
+          myColors = jsonData["myColors"];
+          layerNum = jsonData["layerNum"];
+          nameDict = jsonData["nameDict"];
+          serchData = jsonData["serchData"];
+
+          updateLayerPanel();
+          updateLayers();
+          updateUI();
+        }
+        catch (err) {
+          console.log(err)
+        }
+
+      };
+
+      reader.readAsText(file);
+
+    }
+
+
+  })
+
+  input.click();
+
+
+}
 
 // mobile
 
-function switchView(view){
+function switchView(view) {
   document.querySelector('#search-panel').style.display = "none";
   document.querySelector('#map').style.display = "none";
   document.querySelector('#layer-panel').style.display = "none";
 
 
-  if (view != "map"){
+  if (view != "map") {
     view += "-panel";
   }
   document.querySelector('#' + view).style.display = "block";
 
-  if (view == "layer-panel"){
+  if (view == "layer-panel") {
     document.querySelector("#middle").style.height = "85vh";
   }
-  else{
+  else {
     document.querySelector("#middle").style.height = "90vh";
   }
 

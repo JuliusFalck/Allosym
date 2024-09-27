@@ -24,9 +24,68 @@
     user-select: none;
 }
 
+
+.map-name{
+    position: absolute;
+    font-size: 2vh;
+    color: white;
+    align-self: center;
+    width: 8vw;
+    right: 4.5vw;
+    
+
+}
+
+.map-name-input{
+    display: none;
+    position: absolute;
+    font-size: 2vh;
+    height: 2.8vh;
+    align-self: center;
+    width: 8vw;
+    right: 4.5vw;
+    background-color: black;
+    box-sizing: border-box;
+    resize: none;
+    box-shadow: none;
+    color: white;
+    outline: none;
+    margin: 1vh;
+    padding: 0;
+    border: none;
+}
+
+.save-button{
+    position: absolute;
+    right: 3.5vh;
+    content: url('res/icon_save.svg');
+    cursor: pointer;
+    width: 3vh;
+    height: 3vh;
+    margin: 1vh;
+}
+
+.save-button:hover{
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(90deg) saturate(600%) contrast(0.8);
+}
+
+.load-button{
+    position: absolute;
+    right: 0;
+    content: url('res/icon_load.svg');
+    cursor: pointer;
+    width: 3vh;
+    height: 3vh;
+    margin: 1vh;
+}
+
+.load-button:hover{
+    filter: grayscale(100%) brightness(40%) sepia(100%) hue-rotate(90deg) saturate(600%) contrast(0.8);
+}
+
 #middle{
     margin: 0;
-    display:flex;
+    display: flex;
     width: 100vw;
     height: 90vh;
     background-color: black;
@@ -225,7 +284,7 @@
     color: white;
     background-color: black;
     box-sizing: border-box;
-    padding: 1vh;
+    padding: 0.5vh;
     margin-bottom: 1vh;
     
     border: 0.2vh solid white;
@@ -241,7 +300,7 @@
     color: white;
     background-color: black;
     box-sizing: border-box;
-    padding: 1vh;
+    padding: 0.5vh;
     margin-bottom: 1vh;
 
     border: 0.2vh solid green;
@@ -260,20 +319,37 @@
 
 .color-picker{
     opacity: 0;
-    width: 5vh;
+    width: 0;
     cursor: pointer;
 }
 
+
+
+.alpha-picker{
+    display: flex;
+    writing-mode: vertical-lr;
+    direction: rtl;
+    initial-value: 50;
+    height: 4vh;
+    width: 2vh;
+    margin: 0;
+    padding: 0;
+    accent-color: green;
+
+}
+
 .hexagon{
-    position: absolute;
     visibility: visible;
     height: 3.5vh;
-    display:block;
+    display: flex;
     opacity: 0.8;
     font-size: 5vh;
-    margin-right: 1vh;
+    padding: 0;
+    margin-right: 0.2vh;
+    margin-left: 0vh;
     margin-bottom: 4vh;
-    pointer-events: none;
+    cursor: pointer;
+    user-select: none;
 }
 
 
