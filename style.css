@@ -355,7 +355,6 @@
 
 .layer-title{
     width: 75%;
-    user-select: none;
 }
 
 .layer-title-main{
@@ -366,6 +365,34 @@
     font-size: 1.5vh;
 }
 
+
+.layer-title-main-input{
+    display: none;
+    font-size: 2vh;
+    height: 2vh;
+    width: 100%;
+    background-color: black;
+    box-sizing: border-box;
+    box-shadow: none;
+    color: white;
+    outline: none;
+    padding: 0;
+    border: none;
+}
+
+.layer-title-sub-input{
+    display: none;
+    font-size: 1.5vh;
+    height: 1.5vh;
+    width: 100%;
+    background-color: black;
+    box-sizing: border-box;
+    box-shadow: none;
+    color: white;
+    outline: none;
+    padding: 0;
+    border: none;
+}
 
 .layer-toggle{
     background-image: url('res/eye_on.svg');
@@ -412,8 +439,9 @@
     cursor: pointer;
     color: white;
     user-select: none;
-    padding-bottom: 3vh;
-
+    position: absolute;
+    top: 1vh;
+    right: 1vh;
 }
 
 .layer-cross:hover{

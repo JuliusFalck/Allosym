@@ -17,6 +17,8 @@ let layerNum = 0;
 
 let nameDict = {};
 
+let customCommonNames = {}
+
 let serchData = {};
 
 
@@ -97,7 +99,7 @@ mapNameInput.addEventListener('input', event => {
   mapName.innerHTML = mapNameInput.value;
 })
 
-mapNameInput.addEventListener("keypress", (event)=> {
+mapNameInput.addEventListener("keypress", (event) => {
   console.log(event.keyCode)
   if (event.keyCode === 13) { // key code of the keybord key
     setName();
@@ -106,6 +108,12 @@ mapNameInput.addEventListener("keypress", (event)=> {
     mapNameInput.style.display = "none";
   }
 });
+
+mapNameInput.addEventListener("onfocusout", (event) => {
+  setName();
+  mapName.style.display = "block";
+  mapNameInput.style.display = "none";
+})
 
 saveButton.addEventListener('click', event => {
   saveMap();
@@ -298,7 +306,7 @@ function addLayer(key, name, parent, visible) {
 
   colorPicker.addEventListener("input", (event) => {
     let col = hexToRgb(colorPicker.value);
-    col.push(alphaPicker.value * 255);
+    col.push(alphaPicker.value / 100 * 255);
     myColors[key] = col;
     hexagon.style.color = 'rgb(' + col[0] + ',' + col[1] + ',' + col[2] + ')';
     updateLayers();
@@ -329,10 +337,88 @@ function addLayer(key, name, parent, visible) {
     mainLayerTitle.style.fontStyle = "italic";
   }
 
+  let mainLayerTitleInput = document.createElement('input');
+  layerTitle.appendChild(mainLayerTitleInput);
+  mainLayerTitleInput.classList.add('layer-title-main-input');
+  mainLayerTitleInput.innerHTML = name;
+
   let subLayerTitle = document.createElement('div');
   layerTitle.appendChild(subLayerTitle);
   subLayerTitle.classList.add('layer-title-sub');
   subLayerTitle.innerHTML = serchData[name]["commonName"];
+
+
+  let subLayerTitleInput = document.createElement('input');
+  layerTitle.appendChild(subLayerTitleInput);
+  subLayerTitleInput.classList.add('layer-title-sub-input');
+
+  if (Object.keys(customCommonNames).includes(key)) {
+    subLayerTitleInput.innerHTML = customCommonNames[key];
+  }
+  else {
+    subLayerTitleInput.innerHTML = serchData[name]["commonName"];
+  }
+
+
+  mainLayerTitle.addEventListener('click', event => {
+    mainLayerTitle.style.display = "none";
+    mainLayerTitleInput.style.display = "block";
+    mainLayerTitleInput.value = mainLayerTitle.innerHTML;
+    mainLayerTitleInput.focus();
+
+  })
+
+  subLayerTitle.addEventListener('click', event => {
+    subLayerTitle.style.display = "none";
+    subLayerTitleInput.style.display = "block";
+    subLayerTitleInput.value = subLayerTitle.innerHTML;
+    subLayerTitleInput.focus();
+
+  })
+
+
+  mainLayerTitleInput.addEventListener("blur", (event) => {
+    console.log("out")
+    mainLayerTitle.style.display = "block";
+    mainLayerTitleInput.style.display = "none";
+    mainLayerTitle.innerHTML = mainLayerTitleInput.value;
+    nameDict[key] = [mainLayerTitleInput.value];
+    serchData[nameDict[key]] = {
+      "rank": serchData[name]["rank"],
+      "commonName": serchData[name]["commonName"],
+      "iNatID": serchData[name]["iNatID"]
+    }
+  })
+
+
+
+  subLayerTitleInput.addEventListener("blur", (event) => {
+    console.log("out2")
+    subLayerTitle.style.display = "block";
+    subLayerTitleInput.style.display = "none";
+    subLayerTitle.innerHTML = subLayerTitleInput.value;
+    customCommonNames[key] = subLayerTitleInput.value;
+  })
+
+  mainLayerTitleInput.addEventListener("keypress", (event) => {
+    console.log(event.keyCode)
+    if (event.keyCode === 13) { // key code of the keybord key
+      mainLayerTitle.style.display = "block";
+      mainLayerTitleInput.style.display = "none";
+      mainLayerTitle.innerHTML = mainLayerTitleInput.value;
+    }
+  });
+
+  subLayerTitleInput.addEventListener("keypress", (event) => {
+    console.log(event.keyCode)
+    if (event.keyCode === 13) { // key code of the keybord key
+      subLayerTitle.style.display = "block";
+      subLayerTitleInput.style.display = "none";
+      subLayerTitle.innerHTML = subLayerTitleInput.value;
+      customCommonNames[key] = subLayerTitleInput.value;
+    }
+  });
+
 
   // Toggle Layer
   let layerToggle = document.createElement('div');
@@ -625,10 +711,10 @@ async function iNatSearch(name) {
 }
 
 function setName() {
-    mapName.style.display = "none";
-    mapNameInput.style.display = "block";
-    mapNameInput.value = mapName.innerHTML;
-    mapNameInput.focus();
+  mapName.style.display = "none";
+  mapNameInput.style.display = "block";
+  mapNameInput.value = mapName.innerHTML;
+  mapNameInput.focus();
 
 }
 
@@ -641,7 +727,9 @@ function saveMap() {
     "myColors": myColors,
     "layerNum": layerNum,
     "nameDict": nameDict,
+    "customCommonNames": customCommonNames,
     "serchData": serchData
+    
   };
 
   // Convert the object to a JSON string
@@ -690,7 +778,9 @@ function loadMap() {
           myColors = jsonData["myColors"];
           layerNum = jsonData["layerNum"];
           nameDict = jsonData["nameDict"];
+          customCommonNames = jsonData["customCommonNames"];
           serchData = jsonData["serchData"];
+          
 
           updateLayerPanel();
           updateLayers();
