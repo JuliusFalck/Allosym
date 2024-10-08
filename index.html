@@ -1,49 +1,53 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <title>Allosym</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIkwXxQiaSOZETchhZvqpGcU4b4BjqTgA"></script>
-    <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
-    
+
+<head>
+  <title>Allosym</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCIkwXxQiaSOZETchhZvqpGcU4b4BjqTgA"></script>
+  <script src="https://unpkg.com/deck.gl@latest/dist.min.js"></script>
+
 </head>
-  <body class="dark-body">
-    <div id="top-bar">
-      <img class="title" src="res/title.svg">
-      <span class="map-name">New Map</span>
-      <input class="map-name-input">New Map</textarea>
-      <img class="save-button">
-      <img class="load-button">
-    </div>
-    <div class="vertical-menu">
-      <img class= "v-menu-button" id="search-button" src="res/search_icon.svg">
-      <img class= "v-menu-button-active" id="map-button" src="res/map_icon.svg">
-      <img class= "v-menu-button" id="layer-button" src="res/layer_icon.svg">
-    </div>
-    <div id="middle">
-      <div id="search-panel">
-        <div class="search-box-container">
-          <input name="Search" class="search-box" rows="1" placeholder="Search"></textarea>
-          <img class= "clear-search-button" src="res/icon_X.svg">
-        </div>
-        <div id="result-list"></div>
+
+<body class="dark-body">
+  <div id="top-bar">
+    <img class="title" src="res/title.svg">
+    <span class="map-name">New Map</span>
+    <input class="map-name-input">New Map</textarea>
+    <img class="save-button">
+    <img class="load-button">
+  </div>
+  <div class="vertical-menu">
+    <img class="v-menu-button" id="search-button" src="res/search_icon.svg">
+    <img class="v-menu-button-active" id="map-button" src="res/map_icon.svg">
+    <img class="v-menu-button" id="layer-button" src="res/layer_icon.svg">
+  </div>
+  <div id="middle">
+    <div id="search-panel">
+      <div class="search-box-container">
+        <input name="Search" class="search-box" rows="1" placeholder="Search"></textarea>
+        <img class="clear-search-button" src="res/icon_X.svg">
       </div>
-      <div id="map"></div>
-      <div id="layer-panel"></div>
+      <div id="result-list"></div>
     </div>
-    <div id="bottom-bar">
-      <div id="bottom-fill">
+    <div id="map"></div>
+    <div id="layer-panel"></div>
+  </div>
+  <div id="bottom-bar">
+    <div id="bottom-fill">
 
 
-      </div>
-      <div id="layer-tool-bar">
-        <img class= "explode-button">
-
-
-      </div>
     </div>
-    <script src="colors.js"></script>
-    <script src="save_file.js"></script>
-    <script src="main.js"></script>
-  </body>
+    <div id="layer-tool-bar">
+      <img class="explode-button">
+      <img class="filter-button">
+
+
+    </div>
+  </div>
+  <script src="colors.js"></script>
+  <script src="save_file.js"></script>
+  <script src="main.js"></script>
+</body>
+
 </html>

@@ -1,8 +1,5 @@
 // main.js
 
-
-
-
 let allLayers = [];
 
 let visibleLayers = [];
@@ -17,12 +14,35 @@ let layerNum = 0;
 
 let nameDict = {};
 
-let customCommonNames = {}
+let customCommonNames = {};
 
-let serchData = {};
+let countryFilter = {};
+
+let searchData = {};
+
 
 
 const acceptedRanks = ["kingdom", "phylum", "class", "order", "family", "genus", "species", "subspecies"]
+
+const allCountries = ["AF", "AX", "AL", "DZ", "AS", "AD", "AO", "AI", "AQ", "AG", "AR", "AM", "AW", "AU", "AT", "AZ", "BS", "BH",
+  "BD", "BB", "BY", "BE", "BZ", "BJ", "BM", "BT", "BO", "BQ", "BA", "BW", "BV", "BR", "IO", "BN", "BG", "BF",
+  "BI", "KH", "CM", "CA", "CV", "KY", "CF", "TD", "CL", "CN", "CX", "CC", "CO", "KM", "CD", "CG", "CK", "CR",
+  "CI", "HR", "CU", "CW", "CY", "CZ", "DK", "DJ", "DM", "DO", "EC", "EG", "SV", "GQ", "ER", "EE", "ET", "FK",
+  "FO", "FJ", "FI", "FR", "GF", "PF", "TF", "GA", "GM", "GE", "DE", "GH", "GI", "GR", "GL", "GD", "GP", "GU",
+  "GT", "GG", "GN", "GW", "GY", "HT", "HM", "VA", "HN", "HK", "HU", "IS", "IN", "ID", "IR", "IQ", "IE", "IM",
+  "IL", "IT", "JM", "JP", "JE", "JO", "KZ", "KE", "KI", "KP", "KR", "KW", "KG", "LA", "LV", "LB", "LS", "LR",
+  "LY", "LI", "LT", "LU", "MO", "MK", "MG", "MW", "MY", "MV", "ML", "MT", "MH", "MQ", "MR", "MU", "YT", "MX",
+  "FM", "MD", "MC", "MN", "ME", "MS", "MA", "MZ", "MM", "NA", "NR", "NP", "NL", "NC", "NZ", "NI", "NE", "NG",
+  "NU", "NF", "MP", "NO", "OM", "PK", "PW", "PS", "PA", "PG", "PY", "PE", "PH", "PN", "PL", "PT", "PR", "QA",
+  "RE", "RO", "RU", "RW", "BL", "SH", "KN", "LC", "MF", "PM", "VC", "WS", "SM", "ST", "SA", "SN", "RS", "SC",
+  "SL", "SG", "SX", "SK", "SI", "SB", "SO", "ZA", "GS", "SS", "ES", "LK", "SD", "SR", "SJ", "SZ", "SE", "CH",
+  "SY", "TW", "TJ", "TZ", "TH", "TL", "TG", "TK", "TO", "TT", "TN", "TR", "TM", "TC", "TV", "UG", "UA", "AE",
+  "GB", "US", "UM", "UY", "UZ", "VU", "VE", "VN", "VG", "VI", "WF", "EH", "YE", "ZM", "ZW", "AA", "XK", "XZ", "ZZ"]
+
+
+let clickType = "null";
+
+
 
 // Elements
 
@@ -33,6 +53,8 @@ let resultList = document.querySelector('#result-list');
 let layerPanel = document.querySelector('#layer-panel');
 
 let explodeButton = document.querySelector('.explode-button');
+
+let filterButton = document.querySelector('.filter-button');
 
 let searchButton = document.querySelector('#search-button');
 
@@ -59,6 +81,11 @@ searchBox.addEventListener('input', event => {
 
 explodeButton.addEventListener('click', event => {
   explode();
+})
+
+
+filterButton.addEventListener('click', event => {
+  addFilter();
 })
 
 searchButton.addEventListener('click', event => {
@@ -101,9 +128,8 @@ mapNameInput.addEventListener('input', event => {
 
 mapNameInput.addEventListener("keypress", (event) => {
   console.log(event.keyCode)
-  if (event.keyCode === 13) { // key code of the keybord key
+  if (event.keyCode === 13) {
     setName();
-    console.log("Zzzzzzzzzzzzz")
     mapName.style.display = "block";
     mapNameInput.style.display = "none";
   }
@@ -115,6 +141,7 @@ mapNameInput.addEventListener("onfocusout", (event) => {
   mapNameInput.style.display = "none";
 })
 
+
 saveButton.addEventListener('click', event => {
   saveMap();
 })
@@ -123,6 +150,27 @@ loadButton.addEventListener('click', event => {
   loadMap();
 })
 
+document.getElementById('map').addEventListener('click', event => {
+  setClickType(event.button);
+})
+
+document.getElementById('map').addEventListener('contextmenu', event => {
+  setClickType(event.button);
+});
+
+let clickPromise = createNewPromise();
+
+function createNewPromise() {
+  return new Promise((resolve) => {
+    resolveChange = resolve;  // Store the resolve function
+  });
+}
+
+function setClickType(newValue) {
+  clickType = newValue;
+  resolveChange();
+  clickPromise = createNewPromise(); // Resolve the promise when myVariable changes
+}
 
 
 // Initialize Google Map
@@ -148,6 +196,8 @@ deckOverlay.setMap(map);
 const MVTLayer = deck.MVTLayer;
 
 
+
+
 async function search() {
 
   if (searchBox.value == "") {
@@ -171,7 +221,7 @@ async function search() {
       if (acceptedRanks.includes(res["rank"])) {
 
 
-        serchData[res["name"]] = {
+        searchData[res["name"]] = {
           "rank": res["rank"],
           "commonName": res["preferred_common_name"],
           "iNatID": res["id"]
@@ -333,7 +383,7 @@ function addLayer(key, name, parent, visible) {
   mainLayerTitle.classList.add('layer-title-main');
   mainLayerTitle.innerHTML = name;
 
-  if (["genus", "species", "subspecies"].includes(serchData[name]["rank"])) {
+  if (["genus", "species", "subspecies"].includes(searchData[name]["rank"])) {
     mainLayerTitle.style.fontStyle = "italic";
   }
 
@@ -345,7 +395,7 @@ function addLayer(key, name, parent, visible) {
   let subLayerTitle = document.createElement('div');
   layerTitle.appendChild(subLayerTitle);
   subLayerTitle.classList.add('layer-title-sub');
-  subLayerTitle.innerHTML = serchData[name]["commonName"];
+  subLayerTitle.innerHTML = searchData[name]["commonName"];
 
 
   let subLayerTitleInput = document.createElement('input');
@@ -356,7 +406,7 @@ function addLayer(key, name, parent, visible) {
     subLayerTitleInput.innerHTML = customCommonNames[key];
   }
   else {
-    subLayerTitleInput.innerHTML = serchData[name]["commonName"];
+    subLayerTitleInput.innerHTML = searchData[name]["commonName"];
   }
 
 
@@ -383,14 +433,12 @@ function addLayer(key, name, parent, visible) {
     mainLayerTitleInput.style.display = "none";
     mainLayerTitle.innerHTML = mainLayerTitleInput.value;
     nameDict[key] = [mainLayerTitleInput.value];
-    serchData[nameDict[key]] = {
-      "rank": serchData[name]["rank"],
-      "commonName": serchData[name]["commonName"],
-      "iNatID": serchData[name]["iNatID"]
+    searchData[nameDict[key]] = {
+      "rank": searchData[name]["rank"],
+      "commonName": searchData[name]["commonName"],
+      "iNatID": searchData[name]["iNatID"]
     }
   })
-
-
 
   subLayerTitleInput.addEventListener("blur", (event) => {
     console.log("out2")
@@ -451,7 +499,11 @@ function addLayer(key, name, parent, visible) {
   childCount.id = "child-count-" + key;
 
 
-
+  // filter-icon
+  let filterIcon = document.createElement('div');
+  newLayer.appendChild(filterIcon);
+  filterIcon.classList.add('filter-icon');
+  filterIcon.id = "filter-icon-" + key;
 
 }
 
@@ -506,11 +558,27 @@ function toggleLayer(key) {
 function updateLayers() {
 
   let layers = [];
+
+
   allLayers.forEach((key, i) => {
     if (visibleLayers.includes(key)) {
+
+      // filter
+      let countryFilterString = "";
+      console.log(key)
+      if (Object.keys(countryFilter).includes(key.toString())) {
+        console.log("country")
+        countryFilterString = "&country=";
+        countryFilter[key].forEach(country => {
+          countryFilterString += country;
+        });
+
+      }
+      console.log(countryFilterString)
       const newLayer = new MVTLayer({
         id: 'mvt-layer' + key,
-        data: 'https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}.mvt?srs=EPSG:3857&bin=hex&taxonKey=' + key, // Replace with your MVT source URL
+        data: 'https://api.gbif.org/v2/map/occurrence/density/{z}/{x}/{y}.mvt?srs=EPSG:3857&bin=hex' +
+          countryFilterString + '&taxonKey=' + key,
         minZoom: 0,
         maxZoom: 23,
         getFillColor: myColors[key],
@@ -621,7 +689,7 @@ async function explode() {
 
     nameDict[key] = [...new Set(nameDict[key])];
     for (const name of nameDict[key]) {
-      let layersToAdd = await getChildren(key, serchData[name]["iNatID"]);
+      let layersToAdd = await getChildren(key, searchData[name]["iNatID"]);
 
       let sortedLayers = Object.keys(layersToAdd);
       sortedLayers.sort();
@@ -646,7 +714,7 @@ async function getChildren(key, iNatID) {
       // update the inat version 
       child = await iNatSearch(child["name"]);
       // add inat data
-      serchData[child["name"]] = { "rank": child["rank"], "commonName": child["preferred_common_name"], "iNatID": child["id"] };
+      searchData[child["name"]] = { "rank": child["rank"], "commonName": child["preferred_common_name"], "iNatID": child["id"] };
       let parentLayer = document.getElementById("layer-" + key).parentElement;
       let childKey = await getKey(child["name"]);
       childrenDict[key].push(childKey);
@@ -663,7 +731,7 @@ async function getChildren(key, iNatID) {
 }
 
 async function mergeSiblings(key) {
-  let iNatID = serchData[nameDict[key][0]]["iNatID"];
+  let iNatID = searchData[nameDict[key][0]]["iNatID"];
 
   let inat_response = await fetch("https://api.inaturalist.org/v1/taxa?id=" +
     + iNatID +
@@ -678,7 +746,7 @@ async function mergeSiblings(key) {
 
   inat_json = await inat_response.json();
   for (let child of inat_json["results"]) {
-    serchData[child["name"]] = { "rank": child["rank"], "commonName": child["preferred_common_name"], "iNatID": child["id"] };
+    searchData[child["name"]] = { "rank": child["rank"], "commonName": child["preferred_common_name"], "iNatID": child["id"] };
     let childKey = await getKey(child["name"]);
     if (allLayers.includes(childKey)) {
       nameDict[childKey].push(child["name"]);
@@ -728,8 +796,9 @@ function saveMap() {
     "layerNum": layerNum,
     "nameDict": nameDict,
     "customCommonNames": customCommonNames,
-    "serchData": serchData
-    
+    "countryFilter": countryFilter,
+    "searchData": searchData
+
   };
 
   // Convert the object to a JSON string
@@ -779,8 +848,9 @@ function loadMap() {
           layerNum = jsonData["layerNum"];
           nameDict = jsonData["nameDict"];
           customCommonNames = jsonData["customCommonNames"];
-          serchData = jsonData["serchData"];
-          
+          countryFilter = jsonData["countryFilter"];
+          searchData = jsonData["searchData"];
+
 
           updateLayerPanel();
           updateLayers();
@@ -800,6 +870,130 @@ function loadMap() {
   })
 
   input.click();
+
+
+}
+
+// select country
+
+function addFilter() {
+
+  loadCountriesLayer();
+
+  let setFilterButton = document.createElement('button');
+  setFilterButton.innerHTML = "Set Filter";
+  setFilterButton.classList.add("set-filter-button");
+  document.querySelector("#bottom-bar").appendChild(setFilterButton);
+
+  setFilterButton.addEventListener('click', event => {
+    setFilter();
+    setFilterButton.style.display = "none";
+    updateLayers();
+  })
+
+}
+
+
+function setFilter() {
+  selectedLayers.forEach(key => {
+    document.querySelector("#filter-icon-" + key).style.display = "block";
+    countryFilter[key] = [];
+    if (selectedCountries.length > 0) {
+      console.log("c")
+      selectedCountries.forEach(country => {
+        countryFilter[key].push(country);
+        console.log(country)
+      });
+    }
+    else {
+      countryFilter[key] = allCountries;
+      excludeCountries.forEach(country => {
+        countryFilter[key].splice(countryFilter[key].indexOf(country));
+      });
+    }
+    selectedCountries = [];
+    excludeCountries = [];
+  });
+
+
+}
+
+const geoJsonUrl = 'map_data/countries.json'; // Replace with the URL or path to your GeoJSON data
+
+let selectedCountries = [];
+
+let excludeCountries = [];
+
+
+
+// Function to load the GeoJsonLayer with interactivity
+function loadCountriesLayer() {
+  fetch(geoJsonUrl)
+    .then(response => response.json())
+    .then(data => {
+      const geoJsonLayer = new deck.GeoJsonLayer({
+        id: 'geojson-layer',
+        data,
+        pickable: true,  // Enables click event
+        stroked: true,
+        filled: true,
+        lineWidthMinPixels: 2,
+        getLineColor: [0, 0, 0, 150],
+        // Conditionally set the fill color based on selection
+        getFillColor: d => {
+          if (selectedCountries.includes(d.properties["ISO_A2"])) {
+            return [0, 255, 0, 128];  // Selected color (blue)
+
+          }
+          else if (excludeCountries.includes(d.properties["ISO_A2"])) {
+            return [255, 0, 0, 128]
+          }
+          return [200, 200, 200, 0]; // Default color (gray)
+        },
+        onClick: mapClick
+
+
+
+      });
+
+      // Function to update the layer
+      function updateLayer() {
+        deckOverlay.setProps({ layers: [geoJsonLayer] });
+      }
+      updateLayer();
+    });
+}
+
+
+async function mapClick({ object }) {
+  await clickPromise;
+  console.log(clickType)
+  if (clickType === 0) {
+    let name = object.properties["ISO_A2"];
+    if (excludeCountries.includes(name)) {
+      excludeCountries.splice(excludeCountries.indexOf(name), 1);
+    }
+    if (selectedCountries.includes(name)) {
+      selectedCountries.splice(selectedCountries.indexOf(name), 1);
+    }
+    else {
+      selectedCountries.push(object.properties["ISO_A2"]);  // Set the selected country ID
+    }
+    loadCountriesLayer();
+  }
+  else if (clickType === 2) {
+    let name = object.properties["ISO_A2"];
+    if (selectedCountries.includes(name)) {
+      selectedCountries.splice(selectedCountries.indexOf(name), 1);
+    }
+    if (excludeCountries.includes(name)) {
+      excludeCountries.splice(excludeCountries.indexOf(name), 1);
+    }
+    else {
+      excludeCountries.push(object.properties["ISO_A2"]);  // Set the selected country ID
+    }
+    loadCountriesLayer();
+  }
 
 
 }
